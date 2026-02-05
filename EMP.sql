@@ -73,3 +73,26 @@ DROP COLUMN e_email;
 ALTER TABLE empl RENAME TO employees;
 
 DELETE FROM employees WHERE e_id = 7;
+
+SELECT e_dept,AVG(e_salary), AVG(e_age) FROM employees GROUP BY e_dept;
+
+SELECT MIN(e_salary), Max(e_salary), AVG(e_salary), COUNT(*), e_dept FROM employees GROUP BY e_dept;
+
+SELECT e_dept, e_name, e_salary FROM employees WHERE (e_dept, e_salary) IN (SELECT e_dept, MAX(e_salary) FROM employees GROUP BY e_dept);
+
+SELECT e_name, e_age, e_salary FROM employees 
+WHERE e_age > (SELECT AVG(e_age) FROM employees) AND e_salary <25000;
+
+SELECT e_name, e_dept FROM employees 
+WHERE e_dept = 'Sales' OR e_dept = 'Account' AND e_salary > (SELECT AVG(e_salary) FROM employees WHERE e_dept = employees.e_dept);
+
+SELECT e_dept, AVG(e_salary), COUNT(*) FROM employees 
+GROUP BY e_dept
+HAVING AVG(e_salary) > 22000 AND COUNT(*) >2;
+
+SELECT e_id, e_name, e_salary
+FROM employees
+WHERE e_salary > (SELECT MAX(e_salary) FROM employees WHERE e_dept = 'Sales');
+
+SELECT MAX(e_salary) - MIN(e_salary) AS salary_diff
+FROM employees;
