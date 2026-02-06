@@ -96,3 +96,121 @@ WHERE e_salary > (SELECT MAX(e_salary) FROM employees WHERE e_dept = 'Sales');
 
 SELECT MAX(e_salary) - MIN(e_salary) AS salary_diff
 FROM employees;
+
+SELECT * FROM employees
+WHERE e_salary > (SELECT AVG(e_salary) FROM employees);
+
+SELECT * FROM employees
+WHERE e_salary = (SELECT MAX(e_salary) FROM employees);
+
+use database employees_db;
+
+create table bank(
+  e_id int PRIMARY key,
+  bank_name varchar(20),
+  ITR_paid_amount int
+  );
+ 
+ select* from bank
+ 
+ insert INTO bank values (1,'kotak',1200);
+ insert INTO bank values (2,'SBI',1400);
+ insert INTO bank values (3,'ICICI',1500);
+ insert INTO bank values (4,'RBL',1100);
+ insert INTO bank values (5,'kotak',1150);
+ insert INTO bank values (6,'SBI',1000);
+ insert INTO bank values (7,'SBI',1390);
+ insert INTO bank values (8,'AXIS',2200);
+ insert INTO bank values (9,'IDFC',1900);
+ insert INTO bank values (10,'AXIS',1800);
+ insert INTO bank values (100,'AXIS',1800);
+ insert INTO bank values (101,'RBL',1700);
+ 
+
+select * FROM bank
+select * FROM employees
+
+select * from employees
+inner JOIN bank on employees.e_id=bank.e_id
+
+select * from employees
+LEFT JOIN bank on employees.e_id=bank.e_id
+
+select * from employees
+RIGHT JOIN bank on employees.e_id=bank.e_id
+
+CREATE VIEW DEVELOPEMENT_EMPLOYEES AS SELECT e_id, e_name, e_salary FROM EMPLOYEES
+WHERE E_DEPT = 'Developement';
+
+SELECT * FROM DEVELOPEMENT_EMPLOYEES;
+SELECT * FROM EMPLOYEES;
+
+SELECT e_id, e_name, 1.1*e_salary as bonus from employees;
+
+CREATE OR REPLACE PROCEDURE SHOW_EMPS()
+RETURNS TABLE()
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+DECLARE
+    res RESULTSET DEFAULT (SELECT * FROM EMPLOYEES);
+BEGIN
+    RETURN TABLE(res);
+END;
+$$;
+
+CALL SHOW_EMPS();
+
+CREATE OR REPLACE PROCEDURE INSERT_EMPL(
+    p_id INTEGER, 
+    p_name VARCHAR, 
+    p_salary INTEGER, 
+    p_age INTEGER, 
+    p_gender VARCHAR, 
+    p_dept VARCHAR
+)
+RETURNS STRING
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+BEGIN
+    INSERT INTO employees (e_id, e_name, e_salary, e_age, e_gender, e_dept) 
+    VALUES (:p_id, :p_name, :p_salary, :p_age, :p_gender, :p_dept);
+
+    RETURN 'Success: Employee ' || :p_name || ' added with ID ' || :p_id;
+EXCEPTION
+    WHEN OTHER THEN
+        RETURN 'Error: ' || SQLERRM;
+END;
+$$;
+
+CALL INSERT_EMPL(100,'John',5000000,30,'Male','Developement');
+
+SELECT * FROM EMPLOYEES WHERE e_id = 100;
+
+CREATE OR REPLACE PROCEDURE UPDATE_SAL(NEW_SAL INT, EMP_ID INT)
+RETURNS STRING
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+BEGIN
+    UPDATE EMPLOYEES
+    SET E_SALARY = :NEW_SAL  -- Added colon to bind variable
+    WHERE E_ID = :EMP_ID;    -- Added colon to bind variable
+    
+    RETURN 'SALARY UPDATED'; -- Removed unnecessary parentheses
+END;
+$$;
+
+CALL UPDATE_SAL(45000, 9);
+
+
+select * from employees;
+
+SELECT e_id, e_name, CASE WHEN e_salary > 35000 THEN 'High' WHEN e_salary BETWEEN 30000 AND 35000 THEN 'Medium' ELSE 'Low' END AS Salary_Level FROM EMPLOYEES;
+
+SELECT E_NAME, IFF(E_AGE > 30, 'Senior', 'Junior') AS SENIORITY FROM EMPLOYEES;
+
